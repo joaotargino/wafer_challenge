@@ -5,7 +5,10 @@ import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -22,9 +25,9 @@ import static com.moolajoo.waferchallenge.utils.VerifyNetwork.isNetworkConnected
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     private ListView listView;
+    private ImageButton delBombButton;
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String LIST_KEY = "listOfCountries";
-
 
     private CountriesListAdapter adapter;
     private ArrayList<Country> mCountries = new ArrayList<>();
@@ -32,13 +35,16 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     Parcelable mListState;
 
+    static boolean[] visibility;
+
+    private final Float TRESHOLD = 400.0f;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         listView = findViewById(R.id.lvCountries);
-
 
         if (mListState != null) {
             listView.onRestoreInstanceState(mListState);
@@ -53,7 +59,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 if (swipeDetected.swipeDetected()) {
-                    if (swipeDetected.getAction() == SwipeToDelete.Action.RL) {
+
+                    if (swipeDetected.getAction() == SwipeToDelete.Action.RL
+                            && swipeDetected.getDistance() > TRESHOLD) {
                         String country = "";
                         try {
                             country = mCountries.get(i).getName();
@@ -65,9 +73,19 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                                 Toast.LENGTH_SHORT).show();
                         mCountries.remove(i);
                         adapter.notifyDataSetChanged();
+                        visibility = new boolean[mCountries.size()];
 
-                    } else {
-
+                    }
+//                    else if (swipeDetected.getAction() == SwipeToDelete.Action.RL
+//                            && swipeDetected.getDistance() <= TRESHOLD) {
+//                        updateLayout();
+//                        adapter.notifyDataSetChanged();
+//
+//                    }
+                    else {
+                        visibility = new boolean[mCountries.size()];
+                        visibility[i] = true;
+                        adapter.notifyDataSetChanged();
                     }
                 }
 
@@ -77,12 +95,18 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     }
 
+    public void updateLayout() {
+        LinearLayout layout = findViewById(R.id.text_LL);
+        ViewGroup.LayoutParams params = layout.getLayoutParams();
+//        params.width -= 1;
+        layout.setLayoutParams(params);
+    }
 
     @Override
     public void onTaskCompleted(List<Country> countries) {
         if (countries != null) {
             mCountries.addAll(countries);
-
+            visibility = new boolean[mCountries.size()];
             adapter =
                     new CountriesListAdapter(mCountries, this);
 

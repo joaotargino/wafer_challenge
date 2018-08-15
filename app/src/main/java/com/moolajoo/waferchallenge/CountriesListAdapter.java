@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.moolajoo.waferchallenge.model.Country;
@@ -46,11 +47,11 @@ public class CountriesListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         View view;
 
-        view = LayoutInflater.from(context).inflate(R.layout.country_item, parent, false);
+        view = LayoutInflater.from(context).inflate(R.layout.country_item_button, parent, false);
 
 
         Country country = countries.get(position);
@@ -71,6 +72,27 @@ public class CountriesListAdapter extends BaseAdapter {
         }
 
 
+        ImageButton delButton = view.findViewById(R.id.del_bomb_button);
+
+        delButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity.visibility = new boolean[countries.size()];
+                countries.remove(position);
+                notifyDataSetChanged();
+
+            }
+        });
+
+        if (MainActivity.visibility[position]) {
+            delButton.setVisibility(View.VISIBLE);
+        }
+        else{
+            delButton.setVisibility(View.INVISIBLE);
+        }
+
         return view;
     }
+
+
 }

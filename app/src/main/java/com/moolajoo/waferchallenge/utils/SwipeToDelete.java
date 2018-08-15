@@ -27,6 +27,9 @@ public class SwipeToDelete implements View.OnTouchListener {
         return mSwipeDetected;
     }
 
+    public float getDistance(){
+        return downX - upX;
+    }
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
@@ -51,6 +54,7 @@ public class SwipeToDelete implements View.OnTouchListener {
                         return true;
                     }
                     if (deltaX > 0) {
+                        System.out.println(deltaX);
                         Log.d(LOG_TAG, "Swipe Right to Left");
                         mSwipeDetected = Action.RL;
                         return true;

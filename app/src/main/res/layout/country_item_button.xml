@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:padding="8dp"
+    app:cardElevation="6dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_purple"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/text_LL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/country_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center"
+                app:layout_constraintTop_toBottomOf="@+id/country_language"
+                tools:layout_editor_absoluteX="163dp"
+                tools:text="TextView" />
+
+            <TextView
+                android:id="@+id/country_currency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/country_currency"
+                tools:layout_editor_absoluteX="162dp"
+                tools:text="TextView" />
+
+            <TextView
+                android:id="@+id/country_language"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteX="162dp"
+                tools:layout_editor_absoluteY="16dp"
+                tools:text="TextView" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/del_bomb_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/holo_purple"
+            android:contentDescription="@string/content_description_remove"
+            android:scaleType="fitXY"
+            android:layout_gravity="right"
+            app:srcCompat="@drawable/bomb_remove" />
+    </FrameLayout>
+
+</android.support.v7.widget.CardView>
