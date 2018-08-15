@@ -9,16 +9,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import org.json.JSONObject;
+import com.moolajoo.waferchallenge.model.Country;
 
 import java.util.List;
 
 public class CountriesListAdapter extends BaseAdapter {
 
-    private final List<JSONObject> countries;
+    private final List<Country> countries;
     private final Context context;
 
-    public CountriesListAdapter(List<JSONObject> countries, Context context) {
+    public CountriesListAdapter(List<Country> countries, Context context) {
         this.countries = countries;
         this.context = context;
     }
@@ -53,7 +53,7 @@ public class CountriesListAdapter extends BaseAdapter {
         view = LayoutInflater.from(context).inflate(R.layout.country_item, parent, false);
 
 
-        JSONObject country = countries.get(position);
+        Country country = countries.get(position);
 
         TextView name =
                 view.findViewById(R.id.country_name);
@@ -62,12 +62,10 @@ public class CountriesListAdapter extends BaseAdapter {
         TextView language =
                 view.findViewById(R.id.country_language);
         try {
-            name.setText(country.getString("name"));
+            name.setText(country.getName());
+            currency.setText(country.getCurrency());
+            language.setText(country.getLanguage());
 
-            currency.setText(country.getJSONArray("currencies")
-                    .getJSONObject(0).getString("name"));
-            language.setText(country.getJSONArray("languages")
-                    .getJSONObject(0).getString("name"));
         } catch (Exception e) {
             Log.e("Adapter", e.getLocalizedMessage());
         }

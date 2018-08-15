@@ -1,6 +1,7 @@
 package com.moolajoo.waferchallenge;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -8,12 +9,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.moolajoo.waferchallenge.model.Country;
 import com.moolajoo.waferchallenge.network.OnTaskCompleted;
 import com.moolajoo.waferchallenge.network.RetrieveCountriesTask;
 import com.moolajoo.waferchallenge.utils.SwipeToDelete;
 
-import org.json.JSONObject;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.moolajoo.waferchallenge.utils.VerifyNetwork.isNetworkConnected;
@@ -22,11 +23,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     private ListView listView;
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String LIST_KEY = "listOfCountries";
+
 
     private CountriesListAdapter adapter;
-    private List<JSONObject> mCountries;
+    private ArrayList<Country> mCountries = new ArrayList<>();
     private SwipeToDelete swipeDetected = new SwipeToDelete();
 
+    Parcelable mListState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +40,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         listView = findViewById(R.id.lvCountries);
 
 
-        if (isNetworkConnected(this)) {
-            RetrieveCountriesTask countriesTask = new RetrieveCountriesTask(this);
-            countriesTask.execute();
-        } else {
-            Toast.makeText(MainActivity.this,
-                    R.string.failed_load_data,
-                    Toast.LENGTH_LONG).show();
+        if (mListState != null) {
+            listView.onRestoreInstanceState(mListState);
+
         }
 
 
@@ -54,15 +54,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
                 if (swipeDetected.swipeDetected()) {
                     if (swipeDetected.getAction() == SwipeToDelete.Action.RL) {
-                        Log.d(LOG_TAG, "R to L");
                         String country = "";
                         try {
-                            country = mCountries.get(i).getString("name");
+                            country = mCountries.get(i).getName();
                         } catch (Exception e) {
                             Log.e(LOG_TAG, e.getMessage());
                         }
                         Toast.makeText(MainActivity.this,
-                                "Removed " + country,
+                                getString(R.string.swipe_removed) + country,
                                 Toast.LENGTH_SHORT).show();
                         mCountries.remove(i);
                         adapter.notifyDataSetChanged();
@@ -75,13 +74,15 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
             }
         });
+
     }
 
 
     @Override
-    public void onTaskCompleted(List<JSONObject> countries) {
+    public void onTaskCompleted(List<Country> countries) {
         if (countries != null) {
-            mCountries = countries;
+            mCountries.addAll(countries);
+
             adapter =
                     new CountriesListAdapter(mCountries, this);
 
@@ -94,5 +95,50 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                     Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mListState = listView.onSaveInstanceState();
+        outState.putParcelable(LIST_KEY, mListState);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle state) {
+        super.onRestoreInstanceState(state);
+        mListState = state.getParcelable(LIST_KEY);
+        listView.onRestoreInstanceState(mListState);
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isNetworkConnected(this)) {
+            loadData();
+        } else {
+            Toast.makeText(MainActivity.this,
+                    R.string.failed_load_data,
+                    Toast.LENGTH_LONG).show();
+        }
+
+        if (mListState != null) {
+            listView.onRestoreInstanceState(mListState);
+            mListState = null;
+        }
+
+    }
+
+
+    public void loadData() {
+        RetrieveCountriesTask countriesTask = new RetrieveCountriesTask(this);
+        countriesTask.execute();
     }
 }

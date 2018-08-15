@@ -3,9 +3,10 @@ package com.moolajoo.waferchallenge.network;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.moolajoo.waferchallenge.model.Country;
+
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +17,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RetrieveCountriesTask extends AsyncTask<String, Void, List<JSONObject>> {
+public class RetrieveCountriesTask extends AsyncTask<String, Void, List<Country>> {
 
     private final String LOG_TAG = RetrieveCountriesTask.class.getSimpleName();
     private OnTaskCompleted listener;
@@ -25,17 +26,23 @@ public class RetrieveCountriesTask extends AsyncTask<String, Void, List<JSONObje
         this.listener = listener;
     }
 
-    private List<JSONObject> getDataFromJson(String apiJSON)
+    private List<Country> getDataFromJson(String apiJSON)
             throws JSONException {
 
 
         JSONArray countriesJSONArray = new JSONArray(apiJSON);
 
         Log.d(LOG_TAG, "getting data");
-        List<JSONObject> countriesList = new ArrayList<JSONObject>();
+        List<Country> countriesList = new ArrayList<Country>();
 
         for (int i = 0; i < countriesJSONArray.length(); i++) {
-            countriesList.add(countriesJSONArray.getJSONObject(i));
+            String name = countriesJSONArray.getJSONObject(i).getString("name");
+            String currency = countriesJSONArray.getJSONObject(i).getJSONArray("currencies")
+                    .getJSONObject(0).getString("name");
+            String language = countriesJSONArray.getJSONObject(i).getJSONArray("languages")
+                    .getJSONObject(0).getString("name");
+
+            countriesList.add(new Country(name, currency, language));
         }
 
         return countriesList;
@@ -43,7 +50,7 @@ public class RetrieveCountriesTask extends AsyncTask<String, Void, List<JSONObje
     }
 
     @Override
-    protected List<JSONObject> doInBackground(String... params) {
+    protected List<Country> doInBackground(String... params) {
 
 
         HttpURLConnection urlConnection = null;
@@ -110,7 +117,7 @@ public class RetrieveCountriesTask extends AsyncTask<String, Void, List<JSONObje
         return null;
     }
 
-    protected void onPostExecute(List<JSONObject> countries) {
+    protected void onPostExecute(List<Country> countries) {
         Log.d(LOG_TAG, "on post");
         listener.onTaskCompleted(countries);
     }

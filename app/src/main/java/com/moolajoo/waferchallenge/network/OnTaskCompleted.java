@@ -1,9 +1,9 @@
 package com.moolajoo.waferchallenge.network;
 
-import org.json.JSONObject;
+import com.moolajoo.waferchallenge.model.Country;
 
 import java.util.List;
 
 public interface OnTaskCompleted {
-    void onTaskCompleted(List<JSONObject> countries);
+    void onTaskCompleted(List<Country> countries);
 }
