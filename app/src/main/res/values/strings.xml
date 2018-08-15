@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">WaferChallenge</string>
+    <string name="failed_load_data">Something went wrong. Check your internet connection</string>
+</resources>
