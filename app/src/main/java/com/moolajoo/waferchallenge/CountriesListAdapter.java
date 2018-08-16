@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.moolajoo.waferchallenge.model.Country;
 
@@ -77,8 +78,14 @@ public class CountriesListAdapter extends BaseAdapter {
         delButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(context,
+                        context.getString(R.string.swipe_removed) +
+                                countries.get(position).getName(),
+                        Toast.LENGTH_SHORT).show();
+
                 MainActivity.visibility = new boolean[countries.size()];
                 countries.remove(position);
+
                 notifyDataSetChanged();
 
             }
@@ -86,8 +93,7 @@ public class CountriesListAdapter extends BaseAdapter {
 
         if (MainActivity.visibility[position]) {
             delButton.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             delButton.setVisibility(View.INVISIBLE);
         }
 

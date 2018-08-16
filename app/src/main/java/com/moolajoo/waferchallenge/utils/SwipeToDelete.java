@@ -4,6 +4,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+//source: https://stackoverflow.com/a/17521473/6753565
+
 public class SwipeToDelete implements View.OnTouchListener {
 
     public enum Action {
@@ -27,9 +29,10 @@ public class SwipeToDelete implements View.OnTouchListener {
         return mSwipeDetected;
     }
 
-    public float getDistance(){
+    public float getDistance() {
         return downX - upX;
     }
+
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
